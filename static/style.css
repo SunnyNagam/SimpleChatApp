@@ -1,0 +1,166 @@
+* {
+  box-sizing: border-box;
+}
+
+/* Style the body */
+body {
+  font-family: Arial;
+  margin: 0;
+}
+
+form {
+  padding: 10px;
+  padding-bottom: 5px;
+  position: fixed;
+  width: 100%;
+  bottom: 0px;
+}
+
+.input-group{
+  display: block;
+  width: auto;
+}
+
+#m{
+  width: 60vw;
+}
+
+.btn{
+  width: 8vw;
+  min-width: fit-content;
+}
+
+.scrollable-content {
+  background: #ffcdf7;
+  flex-grow: 1;
+  overflow: auto;
+  max-height: 85vh;
+  padding: 0px;
+}
+
+#messages {
+  list-style-type: none;
+  margin: 0;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+#messages li {
+  padding: 5px 10px;
+}
+
+.talk-bubble {
+	margin-top: 10px;
+  display: block;
+  word-wrap: break-word;
+  position: relative;
+  width: max-content;
+  max-width: 600px;
+  height: auto;
+  background-color: green;
+  clear:both;
+}
+.round{
+  border-radius: 30px;
+	-webkit-border-radius: 30px;
+	-moz-border-radius: 30px;
+}
+.timestamp{
+  color: gray;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+#usersList {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  padding-left: 5px;
+}
+
+.userListItem {
+  display: inline-block;
+  padding: 30px;
+  color: white;
+  font-weight: bold;
+}
+
+#corner{
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 30vw;
+}
+
+/* Header/logo Title */
+.header {
+  padding: 20px;
+  text-align: center;
+  background: #7f84ce;
+  color: white;
+}
+
+/* Column container */
+.row {  
+  display: flex;
+  flex-wrap: wrap;
+  height: 100vh;
+  padding-inline-end: 0px;
+  max-width: 100vw;
+  margin: 0px;
+}
+
+.container-fluid{
+  padding: 0px;
+}
+
+#cozy {
+  padding: 10px;
+  margin: 10px;
+  background-color: #7f84ce;
+  float: right;
+}
+/* Create two unequal columns that sits next to each other */
+/* Sidebar/left column */
+.side {
+  flex: 30%;
+  background-color: #df93e980;
+  padding: 0px;
+}
+
+/* Main column */
+.main {
+  flex: 70%;
+  background-color: #ffcdf7;
+  padding: 0px;
+}
+
+/* Responsive layout - when the screen is less than 700px wide, make the two columns stack on top of each other instead of next to each other */
+@media screen and (max-width: 700px) {
+  .row, .navbar {   
+    flex-direction: column;
+  }
+  .side {
+    flex: 30%;
+  }
+  .main {
+    flex: 70%;
+  }
+  .scrollable-content {
+    max-height: 50vh;
+  }
+  #corner{
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 30vw;
+    float: right;
+  }
+  #m{
+    width: 85vw;
+  }
+  
+  .btn{
+    width: 8vw;
+  }
+}

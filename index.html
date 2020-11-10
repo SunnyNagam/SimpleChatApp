@@ -1,0 +1,202 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>Socket.IO chat</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <link href="style.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+    <div class="container-fluid row">
+        <div class="side">
+            <div class="header">
+                <h3>Current Online Users:</h3>
+            </div>
+
+            <div id="usersList", class=""></div>
+
+            <div style="display: flex; justify-content: center;">
+                <button class="btn btn-primary" id="cozy">Get Cozy</button>
+            </div>
+
+            <img src="https://media1.tenor.com/images/bd0cb92783daf24b8703234371d30953/tenor.gif?itemid=15729338" id="corner" style="display: none;"></img>
+        </div>
+
+        <div class="main">
+            <div class="header">
+                <h3 id="nameDisplay"></h3>
+            </div>
+            <div id="messages" class="scrollable-content"></div>
+
+            <form action="">
+                <div class="input-group">
+                    <input id="m" autocomplete="off" type="text" class="form-control form-control">
+                    <div class="input-group-append">
+                        <button class="btn btn-primary">Send</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script>
+        $(function () {
+            let socket = io();
+            let username = "unknown";
+            let userid = "xxxx";
+            let chatHistory = [];
+            let usernames = {};
+            let usercolors = {};
+            let currentOnline = {};
+
+            function getMessage(data){
+                let message = usernames[data.user] + ": " + data.msg;
+                let obj = $('<div>');
+                let inner = $('<div>');
+                inner.append($("<li>").text(message)
+                    .css('background-color', usercolors[data.user])
+                    .css('font-weight', 'bold')
+                    .css('color', 'white')
+                    .addClass('talk-bubble')
+                    .addClass('round')
+                );
+                inner.append($('<p>').text(data.time).addClass("timestamp"));
+                if(data.user == userid){
+                    inner.find("p").css('float','right');
+                    obj.css('display', 'flex');
+                    obj.css('justify-content', 'flex-end');
+                }
+                return obj.append(inner);
+            }
+
+            function updateUserList() {
+                $('#usersList').empty();
+
+                for (user in usernames) {
+                    let userS = usernames[user];
+                    $('#usersList').append($("<p>").text(userS)
+                        .css('background-color', user in currentOnline?usercolors[user]:"grey")
+                        .addClass('talk-bubble')
+                        .addClass('round')
+                        .addClass('userListItem')
+                    );
+                }
+
+                updateChat();
+            }
+
+            function updateChat() {
+                $('#messages').empty();
+
+                for (let i = 0; i < chatHistory.length; i++) {
+                    $('#messages').append(getMessage(chatHistory[i]));
+                    $("#messages").scrollTop($("#messages")[0].scrollHeight);
+                }
+            }
+
+            function checkForCommands(message){
+                if(message.startsWith("/name")){
+                    let newName = message.split(' ')[1];
+                    socket.emit('changeName', {userid: userid, name: newName});
+                    console.log(newName);
+                    return true;
+                }
+                else if(message.startsWith("/color")){
+                    let newColor = message.split(' ')[1];
+                    socket.emit('changeColor', {userid: userid, color: newColor});
+                    console.log(newColor);
+                    return true;
+                }
+
+                return false;
+            }
+
+            function formatMessage(message){
+                let text = message;
+
+                text = text.replace(":)", "😁");
+                text = text.replace(":(", "🙁");
+                text = text.replace(":o", "😲");
+
+                return text;
+            }
+
+            // Sending message
+            $('form').submit(function (e) {
+                e.preventDefault();
+                
+                var messageText = $('#m').val();
+                $('#m').val('');
+
+                if(checkForCommands(messageText)){
+                    return;
+                }
+
+                messageText = formatMessage(messageText);
+
+                let data = {
+                    message: messageText,
+                    userid: userid
+                }
+
+                socket.emit('chat message', data);
+                return false;
+            });
+
+            $("#cozy").click(function (e){
+                var x = document.getElementById("corner");
+                if (x.style.display === "none") {
+                    x.style.display = "block";
+                } else {
+                    x.style.display = "none";
+                }
+            });
+
+            $( "#m" ).keypress(function() {
+                var messageText = $('#m').val();
+                messageText = formatMessage(messageText);
+                $('#m').val(messageText);
+            });
+
+            socket.on('chat message', function (payload) {
+                chatHistory.push(payload);
+                $('#messages').append(getMessage(payload));
+                $("#messages").scrollTop($("#messages")[0].scrollHeight);
+            });
+
+            socket.on('globalUserNames', function (list) {
+                usernames = list;
+                updateUserList();
+            });
+
+            socket.on('globalUserColors', function (list) {
+                usercolors = list;
+                updateUserList();
+            });
+
+            socket.on('currentUsers', function (list) {
+                currentOnline = list;
+                console.log(currentOnline);
+                updateUserList();
+            });
+
+            socket.on('history', function (history) {
+                chatHistory = history;
+                updateChat();
+            });
+
+            socket.on('username', function (userobj) {
+                userid = userobj.id;
+                username = userobj.username;
+                document.cookie = "userid=" + userobj.id;
+                $('#nameDisplay').empty();
+                $('#nameDisplay').append('Welcome back: ' + username);
+            });
+        });
+    </script>
+</body>
+
+</html>
