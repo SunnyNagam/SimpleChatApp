@@ -11,7 +11,7 @@
     <div class="container-fluid row">
         <div class="side">
             <div class="header">
-                <h3>Current Online Users:</h3>
+                <h3>Online Users:</h3>
             </div>
 
             <div id="usersList", class=""></div>
@@ -53,7 +53,7 @@
             let currentOnline = {};
 
             function getMessage(data){
-                let message = usernames[data.user] + ": " + data.msg;
+                let message = data.msg;
                 let obj = $('<div>');
                 let inner = $('<div>');
                 inner.append($("<li>").text(message)
@@ -63,7 +63,7 @@
                     .addClass('talk-bubble')
                     .addClass('round')
                 );
-                inner.append($('<p>').text(data.time).addClass("timestamp"));
+                inner.append($('<p>').text(usernames[data.user]+" "+data.time).addClass("timestamp"));
                 if(data.user == userid){
                     inner.find("p").css('float','right');
                     obj.css('display', 'flex');
@@ -131,7 +131,7 @@
                 var messageText = $('#m').val();
                 $('#m').val('');
 
-                if(checkForCommands(messageText)){
+                if(messageText == "" || checkForCommands(messageText)){
                     return;
                 }
 

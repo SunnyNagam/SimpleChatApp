@@ -31,7 +31,6 @@ form {
 }
 
 .scrollable-content {
-  background: #ffcdf7;
   flex-grow: 1;
   overflow: auto;
   max-height: 85vh;
@@ -43,6 +42,10 @@ form {
   margin: 0;
   padding-left: 10px;
   padding-right: 10px;
+
+  position: absolute;
+  bottom: 6vh;
+  width: 70vw;
 }
 
 #messages li {
@@ -98,6 +101,8 @@ form {
   text-align: center;
   background: #7f84ce;
   color: white;
+  position: relative;
+  z-index: 2;
 }
 
 /* Column container */
@@ -149,17 +154,21 @@ form {
   .scrollable-content {
     max-height: 50vh;
   }
+  #messages {
+    width: 100vw;
+  }
   #corner{
     position: absolute;
+    left: auto;
     right: 0;
-    bottom: 0;
+    bottom: auto;
+    top: 30vh;
     width: 30vw;
     float: right;
   }
   #m{
-    width: 85vw;
+    width: 80vw;
   }
-  
   .btn{
     width: 8vw;
   }
